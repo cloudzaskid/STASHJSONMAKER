@@ -1,0 +1,346 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JSON Maker</title>
+  <style>
+    body {
+      background-color: #000;
+      color: white;
+      font-family: monospace;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    #app {
+      display: flex;
+      flex: 1;
+      border: 2px solid #0f0;
+      margin: 5px;
+    }
+
+    .left-panel {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      padding: 5px;
+      border-right: 1px solid #0f0;
+    }
+
+    .stash-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 5px;
+      background: #0a0a0a;
+      padding: 10px;
+      border: 2px solid #444;
+      height: 300px;
+      overflow-y: auto;
+    }
+
+    .stash-grid div {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: #111;
+      border: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #aaa;
+      font-size: 0.8em;
+    }
+
+    .button-bar {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 8px 12px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+
+    button.red { background: #a00; color: white; }
+    button.green { background: #0a0; color: white; }
+    button.purple { background: #70f; color: white; }
+
+    .right-panel {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      padding: 5px;
+    }
+
+    .equipment-container {
+      position: relative;
+      background: #0a0a0a;
+      flex: 1;
+      border: 2px dashed #777;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slot {
+      position: absolute;
+      border: 1px dashed #0f0;
+      color: #0f0;
+      padding: 4px;
+      font-size: 0.7em;
+      text-align: center;
+      width: 70px;
+    }
+
+    .slot.back { top: 10%; left: 42%; }
+    .slot.left-arm { top: 25%; left: 10%; }
+    .slot.right-arm { top: 25%; right: 10%; }
+    .slot.left-hip { bottom: 20%; left: 20%; }
+    .slot.right-hip { bottom: 20%; right: 20%; }
+
+    .bag-viewer {
+      border: 2px solid #0f0;
+      background: #111;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9em;
+      height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0f0;
+      margin-top: 10px;
+    }
+
+    .footer-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: #111;
+      border-top: 2px solid #0f0;
+    }
+
+    select {
+      background: #000;
+      color: white;
+      border: 1px solid #444;
+      padding: 6px;
+      width: 300px;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="left-panel">
+      <div class="stash-grid" id="stashGrid"></div>
+      <div class="button-bar">
+        <button class="red">Clear All</button>
+        <button class="green">Reload Example Stash</button>
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <div class="equipment-container">
+        <div class="slot back">Back</div>
+        <div class="slot left-arm">Left Arm</div>
+        <div class="slot right-arm">Right Arm</div>
+        <div class="slot left-hip">Left Hip</div>
+        <div class="slot right-hip">Right Hip</div>
+      </div>
+      <div class="bag-viewer">
+        Select a bag to view contents here
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bar">
+    <select id="itemDropdown">
+<option value="item_apple">item_apple</option>
+<option value="item_anti_gravity_grenade">item_anti_gravity_grenade</option>
+<option value="item_arrow">item_arrow</option>
+<option value="item_arrow_heart">item_arrow_heart</option>
+<option value="item_arrow_lightbulb">item_arrow_lightbulb</option>
+<option value="item_backpack">item_backpack</option>
+<option value="item_backpack_black">item_backpack_black</option>
+<option value="item_backpack_green">item_backpack_green</option>
+<option value="item_backpack_large_base">item_backpack_large_base</option>
+<option value="item_backpack_large_clover">item_backpack_large_clover</option>
+<option value="item_backpack_large_basketball">item_backpack_large_basketball</option>
+<option value="item_backpack_pink">item_backpack_pink</option>
+<option value="item_backpack_small_base">item_backpack_small_base</option>
+<option value="item_backpack_white">item_backpack_white</option>
+<option value="item_backpack_with_flashlight">item_backpack_with_flashlight</option>
+<option value="item_balloon">item_balloon</option>
+<option value="item_balloon_heart">item_balloon_heart</option>
+<option value="item_banana">item_banana</option>
+<option value="item_baseball_bat">item_baseball_bat</option>
+<option value="item_big_cup">item_big_cup</option>
+<option value="item_boombox">item_boombox</option>
+<option value="item_box_fan">item_box_fan</option>
+<option value="item_boombox_neon">item_boombox_neon</option>
+<option value="item_calculator">item_calculator</option>
+<option value="item_cardboard_box">item_cardboard_box</option>
+<option value="item_cash">item_cash</option>
+<option value="item_cash_pile">item_cash_pile</option>
+<option value="item_cash_mega_pile">item_cash_mega_pile</option>
+<option value="item_clapper">item_clapper</option>
+<option value="item_cluster_grenade">item_cluster_grenade</option>
+<option value="item_cola">item_cola</option>
+<option value="item_cola_large">item_cola_large</option>
+<option value="item_company_ration">item_company_ration</option>
+<option value="item_company_ration_heal">item_company_ration_heal</option>
+<option value="item_cracker">item_cracker</option>
+<option value="item_crate">item_crate</option>
+<option value="item_crossbow">item_crossbow</option>
+<option value="item_crossbow_heart">item_crossbow_heart</option>
+<option value="item_crowbar">item_crowbar</option>
+<option value="item_disc">item_disc</option>
+<option value="item_disposable_camera">item_disposable_camera</option>
+<option value="item_dynamite">item_dynamite</option>
+<option value="item_dynamite_cube">item_dynamite_cube</option>
+<option value="item_egg">item_egg</option>
+<option value="item_flaregun">item_flaregun</option>
+<option value="item_flashbang">item_flashbang</option>
+<option value="item_flashlight">item_flashlight</option>
+<option value="item_flashlight_mega">item_flashlight_mega</option>
+<option value="item_flashlight_red">item_flashlight_red</option>
+<option value="item_floppy3">item_floppy3</option>
+<option value="item_floppy5">item_floppy5</option>
+<option value="item_football">item_football</option>
+<option value="item_frying_pan">item_frying_pan</option>
+<option value="item_glowstick">item_glowstick</option>
+<option value="item_goldbar">item_goldbar</option>
+<option value="item_grenade">item_grenade</option>
+<option value="item_heart_chunk">item_heart_chunk</option>
+<option value="item_heart_gun">item_heart_gun</option>
+<option value="item_heartchocolatebox">item_heartchocolatebox</option>
+<option value="item_hh_key">item_hh_key</option>
+<option value="item_hookshot">item_hookshot</option>
+<option value="item_hoverpad">item_hoverpad</option>
+<option value="item_impulse_grenade">item_impulse_grenade</option>
+<option value="item_jetpack">item_jetpack</option>
+<option value="item_keycard">item_keycard</option>
+<option value="item_lance">item_lance</option>
+<option value="item_large_banana">item_large_banana</option>
+<option value="item_mug">item_mug</option>
+<option value="item_nut">item_nut</option>
+<option value="item_ogre_hands">item_ogre_hands</option>
+<option value="item_ore_copper_l">item_ore_copper_l</option>
+<option value="item_ore_copper_m">item_ore_copper_m</option>
+<option value="item_ore_copper_s">item_ore_copper_s</option>
+<option value="item_ore_gold_l">item_ore_gold_l</option>
+<option value="item_ore_gold_m">item_ore_gold_m</option>
+<option value="item_ore_gold_s">item_ore_gold_s</option>
+<option value="item_ore_hell">item_ore_hell</option>
+<option value="item_ore_silver_l">item_ore_silver_l</option>
+<option value="item_ore_silver_m">item_ore_silver_m</option>
+<option value="item_ore_silver_s">item_ore_silver_s</option>
+<option value="item_painting_canvas">item_painting_canvas</option>
+<option value="item_paperpack">item_paperpack</option>
+<option value="item_pelican_case">item_pelican_case</option>
+<option value="item_pickaxe">item_pickaxe</option>
+<option value="item_pickaxe_cny">item_pickaxe_cny</option>
+<option value="item_pickaxe_cube">item_pickaxe_cube</option>
+<option value="item_pipe">item_pipe</option>
+<option value="item_plunger">item_plunger</option>
+<option value="item_pogostick">item_pogostick</option>
+<option value="item_police_baton">item_police_baton</option>
+<option value="item_pumpkin_pie">item_pumpkin_pie</option>
+<option value="item_pumpkinjack">item_pumpkinjack</option>
+<option value="item_pumpkinjack_small">item_pumpkinjack_small</option>
+<option value="item_quiver">item_quiver</option>
+<option value="item_quiver_heart">item_quiver_heart</option>
+<option value="item_radioactive_broccoli">item_radioactive_broccoli</option>
+<option value="item_randombox_mobloot_big">item_randombox_mobloot_big</option>
+<option value="item_randombox_mobloot_medium">item_randombox_mobloot_medium</option>
+<option value="item_randombox_mobloot_small">item_randombox_mobloot_small</option>
+<option value="item_randombox_mobloot_weapons">item_randombox_mobloot_weapons</option>
+<option value="item_revolver">item_revolver</option>
+<option value="item_revolver_ammo">item_revolver_ammo</option>
+<option value="item_rope">item_rope</option>
+<option value="item_rpg">item_rpg</option>
+<option value="item_rpg_ammo">item_rpg_ammo</option>
+<option value="item_rpg_cny">item_rpg_cny</option>
+<option value="item_rubberducky">item_rubberducky</option>
+<option value="item_ruby">item_ruby</option>
+<option value="item_saddle">item_saddle</option>
+<option value="item_scanner">item_scanner</option>
+<option value="item_scissors">item_scissors</option>
+<option value="item_shield">item_shield</option>
+<option value="item_shield_bones">item_shield_bones</option>
+<option value="item_shield_police">item_shield_police</option>
+<option value="item_shotgun">item_shotgun</option>
+<option value="item_shotgun_ammo">item_shotgun_ammo</option>
+<option value="item_shredder">item_shredder</option>
+<option value="item_shrinking_broccoli">item_shrinking_broccoli</option>
+<option value="item_snowball">item_snowball</option>
+<option value="item_stapler">item_stapler</option>
+<option value="item_stick_armbones">item_stick_armbones</option>
+<option value="item_stick_bone">item_stick_bone</option>
+<option value="item_sticker_dispenser">item_sticker_dispenser</option>
+<option value="item_sticky_dynamite">item_sticky_dynamite</option>
+<option value="item_stinky_cheese">item_stinky_cheese</option>
+<option value="item_tablet">item_tablet</option>
+<option value="item_tapedispenser">item_tapedispenser</option>
+<option value="item_tele_grenade">item_tele_grenade</option>
+<option value="item_theremin">item_theremin</option>
+<option value="item_timebomb">item_timebomb</option>
+<option value="item_toilet_paper">item_toilet_paper</option>
+<option value="item_toilet_paper_mega">item_toilet_paper_mega</option>
+<option value="item_toilet_paper_roll_empty">item_toilet_paper_roll_empty</option>
+<option value="item_treestick">item_treestick</option>
+<option value="item_tripwire_explosive">item_tripwire_explosive</option>
+<option value="item_trophy">item_trophy</option>
+<option value="item_turkey_leg">item_turkey_leg</option>
+<option value="item_turkey_whole">item_turkey_whole</option>
+<option value="item_umbrella">item_umbrella</option>
+<option value="item_umbrella_clover">item_umbrella_clover</option>
+<option value="item_unidentified">item_unidentified</option>
+<option value="item_upsidedown_loot">item_upsidedown_loot</option>
+<option value="item_uranium_chunk_l">item_uranium_chunk_l</option>
+<option value="item_uranium_chunk_m">item_uranium_chunk_m</option>
+<option value="item_uranium_chunk_s">item_uranium_chunk_s</option>
+<option value="item_whoopie">item_whoopie</option>
+<option value="item_zipline_gun">item_zipline_gun</option>
+<option value="item_rpg_easter">item_rpg_easter</option>
+<option value="item_rpg_ammo_egg">item_rpg_ammo_egg</option>
+<option value="item_revolver_gold">item_revolver_gold</option>
+</select>
+    <button class="purple">Add Test Item</button>
+    <label><input type="checkbox" id="show3D" checked> Show 3D Models</label>
+  </div>
+
+  <script>
+    const itemOptions = [
+      "item_apple", "item_backpack", "item_banana", "item_cash", "item_flashlight",
+      "item_grenade", "item_heart_gun", "item_radioactive_broccoli"
+    ];
+
+    const dropdown = document.getElementById("itemDropdown");
+    itemOptions.forEach(item => {
+      const option = document.createElement("option");
+      option.value = item;
+      option.textContent = item;
+      dropdown.appendChild(option);
+    });
+
+    const stashGrid = document.getElementById("stashGrid");
+    for (let i = 0; i < 50; i++) {
+      const cell = document.createElement("div");
+      cell.textContent = "+";
+      stashGrid.appendChild(cell);
+    }
+  </script>
+</body>
+</html>
